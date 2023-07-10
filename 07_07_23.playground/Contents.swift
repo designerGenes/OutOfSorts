@@ -94,26 +94,23 @@ func merge<T: Comparable>(l: [T], r: [T], actionQueue: ActionQueue<T>) -> Sortin
     return (out, actionQueue)
 }
 
-func quickSort<T: Comparable>(arr: [T]) -> [T] {
+func quickSort<T: Comparable>(arr: [T], actionQueue: ActionQueue<T> = ActionQueue()) -> SortingResult<T> {
     guard arr.count > 1 else {
-        return arr
+        return (arr, actionQueue)
     }
     let pivot = arr[arr.count / 2]
+    actionQueue.actions.append(.selectPivot(pivot: pivot, arr: arr))
     let less = arr.filter { $0 < pivot }
     let equal = arr.filter { $0 == pivot }
     let more = arr.filter { $0 > pivot }
-
-    return quickSort(arr: less) + equal + quickSort(arr: more)
+    let leftQuickSort = quickSort(arr: less, actionQueue: actionQueue)
+    let rightQuickSort = quickSort(arr: more, actionQueue: actionQueue)
+    let result = leftQuickSort.0 + equal + rightQuickSort.0
+    actionQueue.actions.append(.merge(l: leftQuickSort.0, r: rightQuickSort.0, result: result))
+    return (result, actionQueue)
 }
 
 var myArr = Array(0..<50)
-//myArr.scramble()
-
-//var bubbleSortArr = bubbleSort(arr: &myArr)
-//for action in bubbleSortArr.1 {
-//    print(action.described())
-//}
-
 myArr.scramble()
 var mergeSortArr = mergeSort(arr: &myArr)
 for action in mergeSortArr.1.actions {
