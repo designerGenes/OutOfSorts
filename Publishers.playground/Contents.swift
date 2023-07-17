@@ -2,6 +2,28 @@ import UIKit
 import SwiftUI
 import Combine
 
+struct PokemonResponse: Codable {
+    var data: [PokemonCard]
+}
+
+struct PokemonCard: Codable {
+    var id: String
+    var name: String
+    var flavorText: String?
+}
+
+class DownloadManager {
+    let url = URL(string: "https://api.pokemontcg.io/v2/cards")!
+    func downloadJSON() -> AnyPublisher<[PokemonCard], Error> {
+        URLSession.shared.dataTaskPublisher(for: url)
+            .map(\.data)
+            .receive(on: DispatchQueue.main)
+            .decode(type: PokemonResponse.self, decoder: JSONDecoder())
+            .map(\.data)
+            .eraseToAnyPublisher()
+    }
+}
+
 class PublicationManager {
     var cancellables: Set<AnyCancellable>
     deinit {
@@ -39,15 +61,17 @@ class PublicationManager {
 class SomeSubscriber {
     var subscriptions: Set<AnyCancellable>
     var publicationManager: PublicationManager
+    var downloadManager: DownloadManager
     
     deinit {
         print("deinitializing the SomeSubscriber")
     }
     
-    init(subscriptions: Set<AnyCancellable> = Set<AnyCancellable>(), publicationManager: PublicationManager = PublicationManager()) {
+    init(subscriptions: Set<AnyCancellable> = Set<AnyCancellable>(), publicationManager: PublicationManager = PublicationManager(), downloadManager: DownloadManager = DownloadManager()) {
         print("initialized SomeSubscriber")
         self.subscriptions = subscriptions
         self.publicationManager = publicationManager
+        self.downloadManager = downloadManager
         publicationManager.publishValues()
             .sink { completion in
                 switch completion {
@@ -66,6 +90,25 @@ class SomeSubscriber {
         let myPromise = publicationManager.publishPromise()
             .sink { value in
                 print(value)
+            }
+            .store(in: &self.subscriptions)
+        
+        downloadManager.downloadJSON()
+            .sink { completion in
+                switch completion {
+                case .failure:
+                    print("failed to download Pokemon cards")
+                case .finished:
+                    print("finished downloading Pokemon cards")
+                }
+            } receiveValue: { cards in
+                print("received \(cards.count) Pokemon cards")
+                for card in cards {
+                    print("[\(card.id)] \(card.name)")
+                    if let flavorText = card.flavorText {
+                        print(flavorText)
+                    }
+                }
             }
             .store(in: &self.subscriptions)
     }
