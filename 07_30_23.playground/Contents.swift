@@ -12,8 +12,15 @@ extension Array {
     }
 }
 
-//func mergeSort<T: Comparable>
-
+func mergeSort<T: Comparable>(arr: [T]) -> [T] {
+    guard arr.count > 1 else {
+        return arr
+    }
+    let midIdx = arr.count / 2
+    
+    return merge(l: mergeSort(arr: Array(arr[0..<midIdx])), r: Array(arr[midIdx...]))
+}
+ 
 
 func merge<T: Comparable>(l: [T], r: [T]) -> [T] {
     var (lIdx, rIdx) = (0, 0)
@@ -32,4 +39,4 @@ func merge<T: Comparable>(l: [T], r: [T]) -> [T] {
 }
 
 // Present the view controller in the Live View window
-PlaygroundPage.current.liveView = MyViewController()
+
