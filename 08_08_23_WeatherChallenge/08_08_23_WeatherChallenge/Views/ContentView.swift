@@ -110,7 +110,6 @@ struct SaddleCommandBar: View {
                 StackText(bigText: "19", smallText: "fghij")
                 StackText(bigText: "02", smallText: "jklmno")
             }
-//            .offset(y: 8)
         }
         
         
