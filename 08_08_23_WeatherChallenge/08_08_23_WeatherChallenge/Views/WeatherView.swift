@@ -19,6 +19,7 @@
 
 
 import SwiftUI
+import Combine
 
 enum CommandButtonIcon: String {
     case sparkles, cloud, hurricane, sunrise
@@ -68,10 +69,14 @@ struct StackText: View {
 }
 
 struct CurrentTemperatureView: View {
-    @State var temperatureValue: Int = 13
-    @State var usesFahrenheit: Bool = true
+    @State var weatherMoment: WeatherMoment?
+    @Binding var usesFahrenheit: Bool
     private var temperatureText: String {
-        "\(String(temperatureValue))°\(usesFahrenheit ? "F" : "C")"
+        guard let weatherMoment = weatherMoment else {
+            return "-/-"
+        }
+        let temp = (usesFahrenheit ? weatherMoment.current.tempF : weatherMoment.current.tempC).rounded()
+        return "\(String(temp))°\(usesFahrenheit ? "F" : "C")"
     }
     
     func calculateFontSize(text: String, width: CGFloat) -> CGFloat {
@@ -96,6 +101,9 @@ struct CurrentTemperatureView: View {
                             .foregroundColor(Color.white)
                     }
             }
+            .onTapGesture {
+                usesFahrenheit.toggle()
+            }
         }
     }
 }
@@ -116,8 +124,56 @@ struct SaddleCommandBar: View {
     }
 }
 
-struct ContentView: View {
-    @State var searchZipCode: String = ""
+class WeatherViewViewModel: ObservableObject {
+    @Published var usesFahrenheit: Bool = true
+    @Published var zipCode: String = ""
+    @Published var weatherMoment: WeatherMoment?
+    private let API_KEY = "35c81d7ef4a94893993170611230808"
+    private var currentWeatherURL: URL {
+        URL(string: "https://api.weatherapi.com/v1/current.json?key=\(API_KEY)&q=\(zipCode)&aqi=yes")!
+    }
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    
+    func getCurrentWeather() {
+        URLSession.shared.dataTaskPublisher(for: currentWeatherURL)
+            .map(\.data)
+            .decode(type: WeatherMoment.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("retrieved data successfully")
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            } receiveValue: { [weak self] weatherMoment in
+                self?.weatherMoment = weatherMoment
+            }
+            .store(in: &cancellables)
+    }
+    
+    init(usesFahrenheit: Bool = true, weatherMoment: WeatherMoment? = nil) {
+        self.usesFahrenheit = usesFahrenheit
+        self.weatherMoment = weatherMoment
+        
+        $zipCode.debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] debouncedZipCode in
+            
+                guard debouncedZipCode.count == 5 else {
+                    return
+                }
+                self?.getCurrentWeather()
+            }
+            .store(in: &self.cancellables)
+    }
+}
+
+
+
+
+struct WeatherView: View {
+    @StateObject var viewModel: WeatherViewViewModel = WeatherViewViewModel()
     
     var body: some View {
         GeometryReader { geo in
@@ -133,16 +189,24 @@ struct ContentView: View {
                     CommandBar()
                         .frame(height: 30)
                         .padding()
-                    CurrentTemperatureView()
-                        .frame(width: 150, height: 150)
+                    if viewModel.weatherMoment != nil {
+                        CurrentTemperatureView(weatherMoment: viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
+                            .frame(width: 150, height: 150)
+                    } else {
+                        Text("Loading...")
+                            .foregroundColor(Color.white)
+                    }
+                    
                     Spacer()
-                    TextField("Enter zip code", text: $searchZipCode)
+                    
+                    TextField("Enter zip code", text: $viewModel.zipCode)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
                         .frame(width: geo.size.width * 0.65, height: 16)
                         .padding()
                         .background(Color.white)
                         .cornerRadius(8)
+                        
                     
                     SaddleCommandBar()
                         .frame(width: geo.size.width, height: 100)
@@ -159,7 +223,7 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    WeatherView()
 }
 
 
