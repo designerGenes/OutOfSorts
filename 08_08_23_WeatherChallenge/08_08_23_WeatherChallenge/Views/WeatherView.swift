@@ -75,7 +75,7 @@ struct CurrentTemperatureView: View {
         guard let weatherMoment = weatherMoment else {
             return "-/-"
         }
-        let temp = (usesFahrenheit ? weatherMoment.current.tempF : weatherMoment.current.tempC).rounded()
+        let temp = Int(usesFahrenheit ? weatherMoment.current.tempF : weatherMoment.current.tempC)
         return "\(String(temp))°\(usesFahrenheit ? "F" : "C")"
     }
     
@@ -109,18 +109,26 @@ struct CurrentTemperatureView: View {
 }
 
 struct SaddleCommandBar: View {
+    @Binding var weatherMoment: WeatherMoment?
+    @Binding var usesFahrenheit: Bool
     var body: some View {
-        
-        ZStack(alignment: .center) {
-            Color.darkBlue
-            HStack(spacing: 60) {
-                StackText(bigText: "44", smallText: "abcde")
-                StackText(bigText: "19", smallText: "fghij")
-                StackText(bigText: "02", smallText: "jklmno")
+        GeometryReader { geo in
+            ZStack(alignment: .center) {
+                Color.darkBlue
+                if let weatherMoment = weatherMoment {
+                    HStack {
+                        StackText(bigText: "\(Int(usesFahrenheit ? weatherMoment.current.feelslikeF : weatherMoment.current.feelslikeC))", smallText: "Feels Like")
+                            .frame(width: geo.size.width / 3)
+                        StackText(bigText: "\(weatherMoment.current.windDir)", smallText: "Wind Direction")
+                            .frame(width: geo.size.width / 3)
+                        StackText(bigText: "02", smallText: "AQI")
+                            .frame(width: geo.size.width / 3)
+                    }
+                }
             }
+            Spacer()
+                .frame(height: 14)
         }
-        
-        
     }
 }
 
@@ -135,7 +143,8 @@ class WeatherViewViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     func getCurrentWeather() {
-        URLSession.shared.dataTaskPublisher(for: currentWeatherURL)
+        let url = currentWeatherURL
+        URLSession.shared.dataTaskPublisher(for: url)
             .map(\.data)
             .decode(type: WeatherMoment.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
@@ -161,6 +170,7 @@ class WeatherViewViewModel: ObservableObject {
             .sink { [weak self] debouncedZipCode in
             
                 guard debouncedZipCode.count == 5 else {
+                    self?.weatherMoment = nil
                     return
                 }
                 self?.getCurrentWeather()
@@ -181,20 +191,20 @@ struct WeatherView: View {
             ZStack {
                 Image.forest_dark
                     .resizable()
-                    .scaledToFill()
+                    
                 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .center, spacing: 12) {
                     Spacer()
                         .frame(height: 30)
                     CommandBar()
                         .frame(height: 30)
                         .padding()
                     if viewModel.weatherMoment != nil {
-                        CurrentTemperatureView(weatherMoment: viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
-                            .frame(width: 150, height: 150)
-                    } else {
-                        Text("Loading...")
-                            .foregroundColor(Color.white)
+                        HStack {
+                            CurrentTemperatureView(weatherMoment: viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
+                                .frame(width: 150, height: 150)
+                            Spacer()
+                        }
                     }
                     
                     Spacer()
@@ -202,14 +212,18 @@ struct WeatherView: View {
                     TextField("Enter zip code", text: $viewModel.zipCode)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
-                        .frame(width: geo.size.width * 0.65, height: 16)
+                        .frame(width: geo.size.width * 0.9, height: 16)
                         .padding()
                         .background(Color.white)
                         .cornerRadius(8)
                         
-                    
-                    SaddleCommandBar()
-                        .frame(width: geo.size.width, height: 100)
+                    if viewModel.weatherMoment != nil {
+                        SaddleCommandBar(weatherMoment: $viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
+                            .frame(width: geo.size.width, height: 100)
+                    } else {
+                        Spacer()
+                            .frame(height: 24)
+                    }
                                         
                 }
                 
