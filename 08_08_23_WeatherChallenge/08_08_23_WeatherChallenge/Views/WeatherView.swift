@@ -108,6 +108,26 @@ struct CurrentTemperatureView: View {
     }
 }
 
+struct DynamicContainer: View {
+    @State var text = ""
+
+    var body: some View {
+        GeometryReader { geometry in
+            VStack {
+                ScrollView {
+                    Text(text)
+                        .fixedSize(horizontal: false, vertical: true) // Allows the text to expand vertically
+                        .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height, alignment: .leading) // Set the maximum height to the container's height
+                }
+                .frame(maxHeight: 200) // Set the maximum height of the container
+                .background(Color.clear) // Container's background color
+            }
+//            .padding()
+        }
+        .frame(maxHeight: 200) // You can set your desired maximum height here
+    }
+}
+
 struct WeatherAdviceView: View {
     @Binding var weatherAdvice: WeatherAdvice?
     @State var titleText: String = "Your AI Weather Advice "
@@ -126,16 +146,19 @@ struct WeatherAdviceView: View {
                             .frame(width: geo.size.width, alignment: .leading)
                         
                         Text(weatherAdvice?.advice ?? "...")
-                            .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 0))
+                            .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
                             .font(.system(size: 14, weight: .medium, design: .monospaced))
                             .foregroundColor(Color.white.opacity(0.8))
                             .frame(width: geo.size.width, alignment: .leading)
                     }
                 }
                 .frame(width: geo.size.width)
+                
             }
             
+            
         }
+        .cornerRadius(8)
     }
 }
 
@@ -170,7 +193,7 @@ struct WeatherView: View {
         GeometryReader { geo in
             
             ZStack {
-                Image.forest_dark
+                Image.city_dark
                     .resizable()
                 
                 
@@ -197,11 +220,12 @@ struct WeatherView: View {
                         .padding()
                         .background(Color.white)
                         .cornerRadius(8)
-                    
-                    WeatherAdviceView(weatherAdvice: $viewModel.weatherAdvice)
-                        .frame(width: geo.size.width, height: 100) // only show if needed
+
                     if viewModel.weatherMoment != nil {
-                        
+                        if viewModel.weatherAdvice != nil {
+                            WeatherAdviceView(weatherAdvice: $viewModel.weatherAdvice)
+                                .frame(width: geo.size.width, height: 160)
+                        }
                         SaddleCommandBar(weatherMoment: $viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
                             .frame(width: geo.size.width, height: 100)
                     } else {

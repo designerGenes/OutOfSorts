@@ -38,20 +38,37 @@ class WeatherViewViewModel: ObservableObject {
     @Published var weatherMoment: WeatherMoment?
     @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
-    private let OPENAI_API_KEY = "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"
+    private var OPENAI_API_KEY: String? {
+        guard let fileURL = Bundle.main.url(forResource: "secrets", withExtension: "json") else {
+            return nil
+        }
+        do {
+            let data = try Data(contentsOf: fileURL)
+            if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+               let openAIKey = jsonObject["openAI_api_key"] as? String {
+                return openAIKey
+            }
+        } catch {
+            print(error)
+        }
+        return nil
+    }
+    
     private var currentWeatherURL: URL {
         URL(string: "https://api.weatherapi.com/v1/current.json?key=\(API_KEY)&q=\(zipCode)&aqi=yes")!
     }
     private var aiWeatherAdviceURL: URL {
-        URL(string: "https://api.openai.com/v1/chat/completions")! // TMP!
+        URL(string: "https://api.openai.com/v1/chat/completions")!
     }
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     func getAIAdviceForWeather(weather: WeatherMoment) async throws -> WeatherAdvice {
+        guard let openAIKey = OPENAI_API_KEY else {
+            throw NSError(domain: "No openAI key", code: 0, userInfo: nil)
+        }
         let url = aiWeatherAdviceURL
         let parameters: [OpenAIParameter: Any] = [
-//            .prompt: OpenAIParameter.weatherAdvicePrompt(weather: weather),
             .maxTokens: 100,
             .temperature: 0.7,
             .model: OpenAIParameter.OpenAIModel.gpt3_5_turbo.rawValue,
@@ -66,7 +83,7 @@ class WeatherViewViewModel: ObservableObject {
         
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(OPENAI_API_KEY)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(openAIKey)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
         
         let postData = try JSONSerialization.data(withJSONObject: parametersWithStrings, options: [])
