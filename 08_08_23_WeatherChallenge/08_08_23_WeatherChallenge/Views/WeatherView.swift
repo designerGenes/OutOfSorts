@@ -26,7 +26,7 @@ enum CommandButtonIcon: String {
     case moon_stars_circle_fill = "moon.stars.circle.fill"
     case cloud_drizzle_fill = "cloud.drizzle.fill"
     static var allCases: [CommandButtonIcon] {
-        [.sparkles, .cloud, .hurricane, .sunrise, .moon_stars_circle_fill, .cloud]
+        [.sparkles, .cloud, .hurricane, .sunrise, .moon_stars_circle_fill, .cloud_drizzle_fill]
     }
 }
 
@@ -108,6 +108,36 @@ struct CurrentTemperatureView: View {
     }
 }
 
+struct WeatherAdviceView: View {
+    @Binding var weatherMoment: WeatherMoment?
+    @State var titleText: String = "Your AI Weather Advice "
+    @State var bodyText: String = "Loading..."
+    var body: some View {
+        
+        ZStack(alignment: .leading) {
+            Color.lighterDarkBlue
+            GeometryReader { geo in
+                VStack(alignment: .leading) {
+                    Spacer().frame(height: 8)
+                    Text(titleText)
+                        .padding(EdgeInsets(top: 4, leading: 6, bottom: 0, trailing: 0))
+                        .font(.system(size: 24, weight: .heavy, design: .serif))
+                        .foregroundColor(Color.white)
+                        .frame(width: geo.size.width, alignment: .leading)
+                        
+                    Text(bodyText)
+                        .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 0))
+                        .font(.system(size: 14, weight: .medium, design: .monospaced))
+                        .foregroundColor(Color.white.opacity(0.8))
+                        .frame(width: geo.size.width, alignment: .leading)
+                }
+                .frame(width: geo.size.width)
+            }
+            
+        }
+    }
+}
+
 struct SaddleCommandBar: View {
     @Binding var weatherMoment: WeatherMoment?
     @Binding var usesFahrenheit: Bool
@@ -132,56 +162,6 @@ struct SaddleCommandBar: View {
     }
 }
 
-class WeatherViewViewModel: ObservableObject {
-    @Published var usesFahrenheit: Bool = true
-    @Published var zipCode: String = ""
-    @Published var weatherMoment: WeatherMoment?
-    private let API_KEY = "35c81d7ef4a94893993170611230808"
-    private var currentWeatherURL: URL {
-        URL(string: "https://api.weatherapi.com/v1/current.json?key=\(API_KEY)&q=\(zipCode)&aqi=yes")!
-    }
-    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
-    
-    func getCurrentWeather() {
-        let url = currentWeatherURL
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map(\.data)
-            .decode(type: WeatherMoment.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("retrieved data successfully")
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            } receiveValue: { [weak self] weatherMoment in
-                self?.weatherMoment = weatherMoment
-            }
-            .store(in: &cancellables)
-    }
-    
-    init(usesFahrenheit: Bool = true, weatherMoment: WeatherMoment? = nil) {
-        self.usesFahrenheit = usesFahrenheit
-        self.weatherMoment = weatherMoment
-        
-        $zipCode.debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] debouncedZipCode in
-            
-                guard debouncedZipCode.count == 5 else {
-                    self?.weatherMoment = nil
-                    return
-                }
-                self?.getCurrentWeather()
-            }
-            .store(in: &self.cancellables)
-    }
-}
-
-
-
-
 struct WeatherView: View {
     @StateObject var viewModel: WeatherViewViewModel = WeatherViewViewModel()
     
@@ -191,7 +171,7 @@ struct WeatherView: View {
             ZStack {
                 Image.forest_dark
                     .resizable()
-                    
+                
                 
                 VStack(alignment: .center, spacing: 12) {
                     Spacer()
@@ -216,15 +196,18 @@ struct WeatherView: View {
                         .padding()
                         .background(Color.white)
                         .cornerRadius(8)
-                        
+                    
+                    WeatherAdviceView(weatherMoment: $viewModel.weatherMoment)
+                        .frame(width: geo.size.width, height: 100) // only show if needed
                     if viewModel.weatherMoment != nil {
+                        
                         SaddleCommandBar(weatherMoment: $viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
                             .frame(width: geo.size.width, height: 100)
                     } else {
                         Spacer()
                             .frame(height: 24)
                     }
-                                        
+                    
                 }
                 
                 

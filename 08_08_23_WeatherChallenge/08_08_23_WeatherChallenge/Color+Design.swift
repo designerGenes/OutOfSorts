@@ -49,5 +49,9 @@ extension Color {
     static var lightGray: Color {
         return Color(hex: "F6F9FA")
     }
+    
+    static var lighterDarkBlue: Color {
+        return Color(hex: "525E74")
+    }
 }
 
