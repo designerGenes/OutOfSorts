@@ -9,31 +9,79 @@ import Foundation
 import SwiftUI
 import Combine
 
+typealias FullWeatherResponse = (advice: WeatherAdvice?, moment: WeatherMoment?)
+
+enum OpenAIParameter: String {
+    case prompt
+    case model
+    case maxTokens = "max_tokens"
+    case messages
+    case temperature
+    static func weatherAdvicePrompt(weather: WeatherMoment) -> String {
+        return "It's \(weather.current.tempF) degrees and \(weather.current.condition.text.lowercased()). What should I wear?"
+    }
+    
+    enum MessagesParameter: String {
+        case role, content
+    }
+    
+    enum OpenAIModel: String {
+        case gpt4 = "gpt-4"
+        case gpt4_0613 = "gpt-4-0613"
+        case gpt3_5_turbo = "gpt-3.5-turbo"
+    }
+}
+
 class WeatherViewViewModel: ObservableObject {
     @Published var usesFahrenheit: Bool = true
     @Published var zipCode: String = ""
     @Published var weatherMoment: WeatherMoment?
+    @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
+    private let OPENAI_API_KEY = "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"
     private var currentWeatherURL: URL {
         URL(string: "https://api.weatherapi.com/v1/current.json?key=\(API_KEY)&q=\(zipCode)&aqi=yes")!
     }
     private var aiWeatherAdviceURL: URL {
-        URL(string: "https://api.openai.com/")! // TMP!
+        URL(string: "https://api.openai.com/v1/chat/completions")! // TMP!
     }
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     func getAIAdviceForWeather(weather: WeatherMoment) async throws -> WeatherAdvice {
         let url = aiWeatherAdviceURL
-        print("making advice request at: \(url.absoluteString)")
+        let parameters: [OpenAIParameter: Any] = [
+//            .prompt: OpenAIParameter.weatherAdvicePrompt(weather: weather),
+            .maxTokens: 100,
+            .temperature: 0.7,
+            .model: OpenAIParameter.OpenAIModel.gpt3_5_turbo.rawValue,
+            .messages: [
+                [
+                    OpenAIParameter.MessagesParameter.role.rawValue: "user",
+                    OpenAIParameter.MessagesParameter.content.rawValue: OpenAIParameter.weatherAdvicePrompt(weather: weather)
+                ]
+            ]
+        ]
+        let parametersWithStrings = Dictionary(uniqueKeysWithValues: parameters.map { ($0.key.rawValue, $0.value) })
+        
         var request = URLRequest(url: url)
-        // should be POST request
-        let (data, _) = try await URLSession.shared.data(for: request)
-        return try JSONDecoder().decode(WeatherAdvice.self, from: data)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(OPENAI_API_KEY)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        
+        let postData = try JSONSerialization.data(withJSONObject: parametersWithStrings, options: [])
+        request.httpBody = postData
+        print("making advice request at: \(url.absoluteString)")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
+        let responseString = openAIResponse.choices.first?.message.content
+        return WeatherAdvice(advice: responseString ?? "No advice, sorry")
     }
     
     func getCurrentWeather() async throws -> WeatherMoment {
         let url = currentWeatherURL
+        print("making advice request at: \(url.absoluteString)")
         let (data, _) = try await URLSession.shared.data(from: url)
         return try JSONDecoder().decode(WeatherMoment.self, from: data)
     }
@@ -45,7 +93,7 @@ class WeatherViewViewModel: ObservableObject {
         $zipCode
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .removeDuplicates()
-            .flatMap { [weak self] debouncedZipCode -> AnyPublisher<WeatherAdvice?, Never> in
+            .flatMap { [weak self] debouncedZipCode -> AnyPublisher<FullWeatherResponse?, Never> in
                 guard debouncedZipCode.count == 5, let self = self else {
                     self?.weatherMoment = nil
                     return Just(nil).eraseToAnyPublisher()
@@ -54,18 +102,22 @@ class WeatherViewViewModel: ObservableObject {
                     Task {
                         do {
                             let weather = try await self.getCurrentWeather()
+                            print("got weather with temp of \(weather.current.tempF)° Fahrenheit")
                             let advice = try await self.getAIAdviceForWeather(weather: weather)
-                            promise(.success(advice))
+                            print("got advice of: \(advice.advice)")
+                            promise(.success((advice: advice, moment: weather)))
                         } catch {
                             print("error: \(error.localizedDescription)")
                             promise(.success(nil))
                         }
                     }
-                }.eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
             }
-            .sink { [weak self] advice in
+            .sink { [weak self] fullResponse in
                 DispatchQueue.main.async {
-                    // update views here with advice
+                    self?.weatherMoment = fullResponse?.moment
+                    self?.weatherAdvice = fullResponse?.advice
                 }
             }
             .store(in: &self.cancellables)
