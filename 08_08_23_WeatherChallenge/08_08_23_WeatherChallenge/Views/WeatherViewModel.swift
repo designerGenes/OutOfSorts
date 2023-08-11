@@ -91,7 +91,7 @@ class WeatherViewViewModel: ObservableObject {
         let postData = try JSONSerialization.data(withJSONObject: parametersWithStrings, options: [])
         request.httpBody = postData
         print("making advice request at: \(url.absoluteString)")
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await URLSession.shared.data(for: request)
         
         let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
         let responseString = openAIResponse.choices.first?.message.content
