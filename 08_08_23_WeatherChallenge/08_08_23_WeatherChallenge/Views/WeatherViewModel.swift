@@ -39,19 +39,21 @@ class WeatherViewViewModel: ObservableObject {
     @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
     private var OPENAI_API_KEY: String? {
-        guard let fileURL = Bundle.main.url(forResource: "secrets", withExtension: "json") else {
-            return nil
-        }
-        do {
-            let data = try Data(contentsOf: fileURL)
-            if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-               let openAIKey = jsonObject["openAI_api_key"] as? String {
-                return openAIKey
-            }
-        } catch {
-            print(error)
-        }
-        return nil
+        let key = ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
+        return key
+//        guard let fileURL = Bundle.main.url(forResource: "secrets", withExtension: "json") else {
+//            return nil
+//        }
+//        do {
+//            let data = try Data(contentsOf: fileURL)
+//            if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+//               let openAIKey = jsonObject["openAI_api_key"] as? String {
+//                return openAIKey
+//            }
+//        } catch {
+//            print(error)
+//        }
+//        return nil
     }
     
     private var currentWeatherURL: URL {
