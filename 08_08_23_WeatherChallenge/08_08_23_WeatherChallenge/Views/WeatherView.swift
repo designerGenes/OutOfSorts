@@ -244,8 +244,10 @@ struct WeatherView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     WeatherView()
 }
+#endif
 
 
