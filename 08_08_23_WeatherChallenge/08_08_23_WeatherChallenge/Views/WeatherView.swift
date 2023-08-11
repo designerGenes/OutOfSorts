@@ -244,10 +244,10 @@ struct WeatherView: View {
     }
 }
 
-#if DEBUG
-#Preview {
-    WeatherView()
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    WeatherView()
+//}
+//#endif
 
 
