@@ -52,7 +52,7 @@ class WeatherViewViewModel: ObservableObject {
     @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
     private var OPENAI_API_KEY: String? {
-        return Secrets.openAIAPIKEY
+        return Bundle.main.infoDictionary?["OPENAI_API_KEY"] as? String
     }
     
     private var currentWeatherURL: URL {

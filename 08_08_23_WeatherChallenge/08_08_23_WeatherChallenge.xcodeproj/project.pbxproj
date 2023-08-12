@@ -30,7 +30,7 @@
 		A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Design.swift"; sourceTree = "<group>"; };
 		A893EB3F2A87CC0D00C9E6D2 /* ci_pre_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_pre_xcodebuild.sh; sourceTree = "<group>"; };
 		A8B2E2512A8292A400A1B0EE /* Image+Design.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Image+Design.swift"; sourceTree = "<group>"; };
-		A8FC09742A8541A40018FA45 /* -8-08-23-WeatherChallenge-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "-8-08-23-WeatherChallenge-Info.plist"; sourceTree = SOURCE_ROOT; };
+		A8FC09742A8541A40018FA45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +73,7 @@
 		A858C4A82A828F97004A5373 /* 08_08_23_WeatherChallenge */ = {
 			isa = PBXGroup;
 			children = (
-				A8FC09742A8541A40018FA45 /* -8-08-23-WeatherChallenge-Info.plist */,
+				A8FC09742A8541A40018FA45 /* Info.plist */,
 				A82D92042A82AFE40008F7A9 /* Models */,
 				A858C4A92A828F97004A5373 /* _8_08_23_WeatherChallengeApp.swift */,
 				A8B2E2512A8292A400A1B0EE /* Image+Design.swift */,
@@ -326,7 +326,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DYJ7634L5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "-8-08-23-WeatherChallenge-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -366,7 +366,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DYJ7634L5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "-8-08-23-WeatherChallenge-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
