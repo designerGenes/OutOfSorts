@@ -15,6 +15,7 @@
 		A858C4B12A828F98004A5373 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A858C4B02A828F98004A5373 /* Preview Assets.xcassets */; };
 		A881FC102A85479500410CF8 /* WeatherAdvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A881FC0F2A85479500410CF8 /* WeatherAdvice.swift */; };
 		A891B1202A8291CA00A1C5F8 /* Color+Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */; };
+		A893EB482A87EB2000C9E6D2 /* secrets.json in Resources */ = {isa = PBXBuildFile; fileRef = A893EB472A87EB2000C9E6D2 /* secrets.json */; };
 		A8B2E2522A8292A400A1B0EE /* Image+Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B2E2512A8292A400A1B0EE /* Image+Design.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Design.swift"; sourceTree = "<group>"; };
 		A893EB3F2A87CC0D00C9E6D2 /* ci_pre_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_pre_xcodebuild.sh; sourceTree = "<group>"; };
 		A893EB452A87E9B600C9E6D2 /* secrets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = secrets.json; path = supportingfiles/secrets.json; sourceTree = SOURCE_ROOT; };
+		A893EB472A87EB2000C9E6D2 /* secrets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = secrets.json; path = supportingfiles/secrets.json; sourceTree = "<group>"; };
 		A8B2E2512A8292A400A1B0EE /* Image+Design.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Image+Design.swift"; sourceTree = "<group>"; };
 		A8FC09742A8541A40018FA45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -57,6 +59,7 @@
 		A858C49D2A828F97004A5373 = {
 			isa = PBXGroup;
 			children = (
+				A893EB472A87EB2000C9E6D2 /* secrets.json */,
 				A893EB3E2A87CBF600C9E6D2 /* ci_scripts */,
 				A858C4A82A828F97004A5373 /* 08_08_23_WeatherChallenge */,
 				A858C4A72A828F97004A5373 /* Products */,
@@ -170,6 +173,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A893EB482A87EB2000C9E6D2 /* secrets.json in Resources */,
 				A858C4B12A828F98004A5373 /* Preview Assets.xcassets in Resources */,
 				A858C4AE2A828F98004A5373 /* Assets.xcassets in Resources */,
 			);
