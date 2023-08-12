@@ -11,6 +11,19 @@ import Combine
 
 typealias FullWeatherResponse = (advice: WeatherAdvice?, moment: WeatherMoment?)
 
+struct Secrets {
+    private static func secrets() -> [String: Any] {
+        let path = Bundle.main.path(forResource: "secrets", ofType: "json")!
+        let data = try! Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+        return try! JSONSerialization.jsonObject(with: data) as! [String: Any]
+    }
+
+    static var openAIAPIKEY: String {
+        return secrets()["OPENAI_API_KEY"] as! String
+    }
+}
+
+
 enum OpenAIParameter: String {
     case prompt
     case model
@@ -39,21 +52,7 @@ class WeatherViewViewModel: ObservableObject {
     @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
     private var OPENAI_API_KEY: String? {
-        let key = ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
-        return key
-//        guard let fileURL = Bundle.main.url(forResource: "secrets", withExtension: "json") else {
-//            return nil
-//        }
-//        do {
-//            let data = try Data(contentsOf: fileURL)
-//            if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-//               let openAIKey = jsonObject["openAI_api_key"] as? String {
-//                return openAIKey
-//            }
-//        } catch {
-//            print(error)
-//        }
-//        return nil
+        return Secrets.openAIAPIKEY
     }
     
     private var currentWeatherURL: URL {
@@ -66,9 +65,6 @@ class WeatherViewViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     func getAIAdviceForWeather(weather: WeatherMoment) async throws -> WeatherAdvice {
-        guard let openAIKey = OPENAI_API_KEY else {
-            throw NSError(domain: "No openAI key", code: 0, userInfo: nil)
-        }
         let url = aiWeatherAdviceURL
         let parameters: [OpenAIParameter: Any] = [
             .maxTokens: 100,
@@ -85,7 +81,7 @@ class WeatherViewViewModel: ObservableObject {
         
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(openAIKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(Secrets.openAIAPIKEY)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
         
         let postData = try JSONSerialization.data(withJSONObject: parametersWithStrings, options: [])

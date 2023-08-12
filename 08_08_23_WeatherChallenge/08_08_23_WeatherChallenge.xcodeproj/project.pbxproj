@@ -28,6 +28,7 @@
 		A858C4B02A828F98004A5373 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A881FC0F2A85479500410CF8 /* WeatherAdvice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherAdvice.swift; sourceTree = "<group>"; };
 		A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Design.swift"; sourceTree = "<group>"; };
+		A893EB3F2A87CC0D00C9E6D2 /* ci_pre_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_pre_xcodebuild.sh; sourceTree = "<group>"; };
 		A8B2E2512A8292A400A1B0EE /* Image+Design.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Image+Design.swift"; sourceTree = "<group>"; };
 		A8FC09742A8541A40018FA45 /* -8-08-23-WeatherChallenge-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "-8-08-23-WeatherChallenge-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -55,6 +56,7 @@
 		A858C49D2A828F97004A5373 = {
 			isa = PBXGroup;
 			children = (
+				A893EB3E2A87CBF600C9E6D2 /* ci_scripts */,
 				A858C4A82A828F97004A5373 /* 08_08_23_WeatherChallenge */,
 				A858C4A72A828F97004A5373 /* Products */,
 			);
@@ -98,6 +100,14 @@
 				A84362812A8538A900B26935 /* WeatherViewModel.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A893EB3E2A87CBF600C9E6D2 /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				A893EB3F2A87CC0D00C9E6D2 /* ci_pre_xcodebuild.sh */,
+			);
+			path = ci_scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

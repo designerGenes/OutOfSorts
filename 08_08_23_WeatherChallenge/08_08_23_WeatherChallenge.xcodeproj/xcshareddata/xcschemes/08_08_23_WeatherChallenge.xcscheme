@@ -49,13 +49,6 @@
             ReferencedContainer = "container:08_08_23_WeatherChallenge.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "OPENAI_API_KEY"
-            value = "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"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
