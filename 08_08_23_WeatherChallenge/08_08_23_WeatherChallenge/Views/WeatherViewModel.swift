@@ -11,19 +11,6 @@ import Combine
 
 typealias FullWeatherResponse = (advice: WeatherAdvice?, moment: WeatherMoment?)
 
-struct Secrets {
-    private static func secrets() -> [String: Any] {
-        let path = Bundle.main.path(forResource: "secrets", ofType: "json")!
-        let data = try! Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-        return try! JSONSerialization.jsonObject(with: data) as! [String: Any]
-    }
-
-    static var openAIAPIKEY: String {
-        return secrets()["OPENAI_API_KEY"] as! String
-    }
-}
-
-
 enum OpenAIParameter: String {
     case prompt
     case model
@@ -65,6 +52,9 @@ class WeatherViewViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     func getAIAdviceForWeather(weather: WeatherMoment) async throws -> WeatherAdvice {
+        guard let OPENAI_API_KEY = OPENAI_API_KEY else {
+            throw NSError(domain: "No API key found", code: 0, userInfo: nil)
+        }
         let url = aiWeatherAdviceURL
         let parameters: [OpenAIParameter: Any] = [
             .maxTokens: 100,
@@ -81,7 +71,7 @@ class WeatherViewViewModel: ObservableObject {
         
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(Secrets.openAIAPIKEY)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(OPENAI_API_KEY)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
         
         let postData = try JSONSerialization.data(withJSONObject: parametersWithStrings, options: [])
