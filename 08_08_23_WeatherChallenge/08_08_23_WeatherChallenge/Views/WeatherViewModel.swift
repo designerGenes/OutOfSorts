@@ -39,6 +39,19 @@ class WeatherViewViewModel: ObservableObject {
     @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
     private var OPENAI_API_KEY: String? {
+        #if DEBUG
+        if let path = Bundle.main.path(forResource: "secrets", ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+                if let jsonResult = jsonResult as? Dictionary<String, AnyObject> {
+                    return jsonResult["OPENAI_API_KEY"] as? String
+                }
+            } catch {
+                print(error)
+            }
+        }
+        #endif
         return Bundle.main.infoDictionary?["OPENAI_API_KEY"] as? String
     }
     
@@ -86,7 +99,7 @@ class WeatherViewViewModel: ObservableObject {
     
     func getCurrentWeather() async throws -> WeatherMoment {
         let url = currentWeatherURL
-        print("making advice request at: \(url.absoluteString)")
+        print("making weather request at: \(url.absoluteString)")
         let (data, _) = try await URLSession.shared.data(from: url)
         return try JSONDecoder().decode(WeatherMoment.self, from: data)
     }

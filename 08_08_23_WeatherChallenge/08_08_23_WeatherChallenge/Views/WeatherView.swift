@@ -110,7 +110,7 @@ struct CurrentTemperatureView: View {
 
 struct DynamicContainer: View {
     @State var text = ""
-
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -122,7 +122,7 @@ struct DynamicContainer: View {
                 .frame(maxHeight: 200) // Set the maximum height of the container
                 .background(Color.clear) // Container's background color
             }
-//            .padding()
+            //            .padding()
         }
         .frame(maxHeight: 200) // You can set your desired maximum height here
     }
@@ -188,6 +188,7 @@ struct SaddleCommandBar: View {
 
 struct WeatherView: View {
     @StateObject var viewModel: WeatherViewViewModel = WeatherViewViewModel()
+    @State var keyboardHeight: CGFloat = 0
     
     var body: some View {
         GeometryReader { geo in
@@ -214,33 +215,59 @@ struct WeatherView: View {
                     Spacer()
                     
                     TextField("Enter zip code", text: $viewModel.zipCode)
+                        .lineLimit(1)
+                        .keyboardType(.numberPad)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
                         .frame(width: geo.size.width * 0.9, height: 16)
                         .padding()
                         .background(Color.white)
                         .cornerRadius(8)
-
-                    if viewModel.weatherMoment != nil {
+                        .offset(y: viewModel.weatherMoment == nil ? -keyboardHeight : 0)
+                        .animation(.easeOut, value: 0.25)
+                        
+                    
+                    if viewModel.weatherMoment == nil {
+                        Spacer()
+                            .frame(height: 24)
+                    } else {
                         if viewModel.weatherAdvice != nil {
                             WeatherAdviceView(weatherAdvice: $viewModel.weatherAdvice)
                                 .frame(width: geo.size.width, height: 160)
                         }
                         SaddleCommandBar(weatherMoment: $viewModel.weatherMoment, usesFahrenheit: $viewModel.usesFahrenheit)
                             .frame(width: geo.size.width, height: 100)
-                    } else {
-                        Spacer()
-                            .frame(height: 24)
+                        
                     }
                     
                 }
-                
-                
+                .onAppear {
+                    // Register to receive notification
+                    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
+                        withAnimation {
+                            keyboardHeight = notification.keyboardHeight
+                        }
+                    }
+                    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+                        withAnimation {
+                            keyboardHeight = 0
+                        }
+                    }
+                }
             }
+            .gesture(TapGesture().onEnded({ _ in
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }))
             .ignoresSafeArea()
         }
         
         
+    }
+}
+
+extension Notification {
+    var keyboardHeight: CGFloat {
+        return (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
     }
 }
 
