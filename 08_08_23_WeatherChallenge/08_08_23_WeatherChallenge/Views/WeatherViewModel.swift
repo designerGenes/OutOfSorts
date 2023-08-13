@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 import Combine
+import AWSClientRuntime
+import AwsCSdkUtils
+
 
 typealias FullWeatherResponse = (advice: WeatherAdvice?, moment: WeatherMoment?)
 
@@ -38,60 +41,29 @@ class WeatherViewViewModel: ObservableObject {
     @Published var weatherMoment: WeatherMoment?
     @Published var weatherAdvice: WeatherAdvice?
     private let API_KEY = "35c81d7ef4a94893993170611230808"
-    private var OPENAI_API_KEY: String? {
-        #if DEBUG
-        if let path = Bundle.main.path(forResource: "secrets", ofType: "json") {
-            do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-                if let jsonResult = jsonResult as? Dictionary<String, AnyObject> {
-                    return jsonResult["OPENAI_API_KEY"] as? String
-                }
-            } catch {
-                print(error)
-            }
-        }
-        #endif
-        return Bundle.main.infoDictionary?["OPENAI_API_KEY"] as? String
-    }
     
     private var currentWeatherURL: URL {
         URL(string: "https://api.weatherapi.com/v1/current.json?key=\(API_KEY)&q=\(zipCode)&aqi=yes")!
     }
-    private var aiWeatherAdviceURL: URL {
-        URL(string: "https://api.openai.com/v1/chat/completions")!
+    private func aiWeatherAdviceURL(weatherMoment: WeatherMoment) -> URL {
+        let urlBase = "http://weatheradviceendpoint-env.eba-a4cqsq7q.us-west-2.elasticbeanstalk.com/weather"
+        var urlComponents = URLComponents(string: urlBase)
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "zipCode", value: self.zipCode),
+            URLQueryItem(name: "weatherTemp", value: String(describing: weatherMoment.current.tempF)),
+            URLQueryItem(name: "weatherCondition", value: weatherMoment.current.condition.text.lowercased()),
+        ]
+
+        return urlComponents!.url!
     }
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    func getAIAdviceForWeather(weather: WeatherMoment) async throws -> WeatherAdvice {
-        guard let OPENAI_API_KEY = OPENAI_API_KEY else {
-            throw NSError(domain: "No API key found", code: 0, userInfo: nil)
-        }
-        let url = aiWeatherAdviceURL
-        let parameters: [OpenAIParameter: Any] = [
-            .maxTokens: 100,
-            .temperature: 0.7,
-            .model: OpenAIParameter.OpenAIModel.gpt3_5_turbo.rawValue,
-            .messages: [
-                [
-                    OpenAIParameter.MessagesParameter.role.rawValue: "user",
-                    OpenAIParameter.MessagesParameter.content.rawValue: OpenAIParameter.weatherAdvicePrompt(weather: weather)
-                ]
-            ]
-        ]
-        let parametersWithStrings = Dictionary(uniqueKeysWithValues: parameters.map { ($0.key.rawValue, $0.value) })
+    func getWeatherAdviceFromAWS(weatherMoment: WeatherMoment) async throws -> WeatherAdvice {
         
-        var request = URLRequest(url: url)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(OPENAI_API_KEY)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-        
-        let postData = try JSONSerialization.data(withJSONObject: parametersWithStrings, options: [])
-        request.httpBody = postData
-        print("making advice request at: \(url.absoluteString)")
-        let (data, _) = try await URLSession.shared.data(for: request)
-        
+        let url = aiWeatherAdviceURL(weatherMoment: weatherMoment)
+        print("making AI advice request at: \(url.absoluteString)")
+        let (data, _) = try await URLSession.shared.data(from: url)
         let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
         let responseString = openAIResponse.choices.first?.message.content
         return WeatherAdvice(advice: responseString ?? "No advice, sorry")
@@ -121,9 +93,9 @@ class WeatherViewViewModel: ObservableObject {
                         do {
                             let weather = try await self.getCurrentWeather()
                             print("got weather with temp of \(weather.current.tempF)° Fahrenheit")
-                            let advice = try await self.getAIAdviceForWeather(weather: weather)
-                            print("got advice of: \(advice.advice)")
-                            promise(.success((advice: advice, moment: weather)))
+                            let adviceResponse = try await self.getWeatherAdviceFromAWS(weatherMoment: weather)
+                            print("got advice of: \(adviceResponse.advice)")
+                            promise(.success((advice: adviceResponse, moment: weather)))
                         } catch {
                             print("error: \(error.localizedDescription)")
                             promise(.success(nil))
