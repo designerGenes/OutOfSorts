@@ -15,13 +15,6 @@
 		A858C4B12A828F98004A5373 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A858C4B02A828F98004A5373 /* Preview Assets.xcassets */; };
 		A881FC102A85479500410CF8 /* WeatherAdvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A881FC0F2A85479500410CF8 /* WeatherAdvice.swift */; };
 		A891B1202A8291CA00A1C5F8 /* Color+Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */; };
-		A893EB4D2A8818FF00C9E6D2 /* AWSACM in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB4C2A8818FF00C9E6D2 /* AWSACM */; };
-		A893EB4F2A8818FF00C9E6D2 /* AWSACMPCA in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB4E2A8818FF00C9E6D2 /* AWSACMPCA */; };
-		A893EB512A8818FF00C9E6D2 /* AWSAPIGateway in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB502A8818FF00C9E6D2 /* AWSAPIGateway */; };
-		A893EB532A8818FF00C9E6D2 /* AWSARCZonalShift in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB522A8818FF00C9E6D2 /* AWSARCZonalShift */; };
-		A893EB552A8818FF00C9E6D2 /* AWSAccessAnalyzer in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB542A8818FF00C9E6D2 /* AWSAccessAnalyzer */; };
-		A893EB572A8818FF00C9E6D2 /* AWSAccount in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB562A8818FF00C9E6D2 /* AWSAccount */; };
-		A893EB592A8818FF00C9E6D2 /* AWSAlexaForBusiness in Frameworks */ = {isa = PBXBuildFile; productRef = A893EB582A8818FF00C9E6D2 /* AWSAlexaForBusiness */; };
 		A8B2E2522A8292A400A1B0EE /* Image+Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B2E2512A8292A400A1B0EE /* Image+Design.swift */; };
 /* End PBXBuildFile section */
 
@@ -45,13 +38,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A893EB572A8818FF00C9E6D2 /* AWSAccount in Frameworks */,
-				A893EB512A8818FF00C9E6D2 /* AWSAPIGateway in Frameworks */,
-				A893EB592A8818FF00C9E6D2 /* AWSAlexaForBusiness in Frameworks */,
-				A893EB552A8818FF00C9E6D2 /* AWSAccessAnalyzer in Frameworks */,
-				A893EB4D2A8818FF00C9E6D2 /* AWSACM in Frameworks */,
-				A893EB4F2A8818FF00C9E6D2 /* AWSACMPCA in Frameworks */,
-				A893EB532A8818FF00C9E6D2 /* AWSARCZonalShift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,13 +127,6 @@
 			);
 			name = 08_08_23_WeatherChallenge;
 			packageProductDependencies = (
-				A893EB4C2A8818FF00C9E6D2 /* AWSACM */,
-				A893EB4E2A8818FF00C9E6D2 /* AWSACMPCA */,
-				A893EB502A8818FF00C9E6D2 /* AWSAPIGateway */,
-				A893EB522A8818FF00C9E6D2 /* AWSARCZonalShift */,
-				A893EB542A8818FF00C9E6D2 /* AWSAccessAnalyzer */,
-				A893EB562A8818FF00C9E6D2 /* AWSAccount */,
-				A893EB582A8818FF00C9E6D2 /* AWSAlexaForBusiness */,
 			);
 			productName = 08_08_23_WeatherChallenge;
 			productReference = A858C4A62A828F97004A5373 /* 08_08_23_WeatherChallenge.app */;
@@ -178,7 +157,6 @@
 			);
 			mainGroup = A858C49D2A828F97004A5373;
 			packageReferences = (
-				A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */,
 			);
 			productRefGroup = A858C4A72A828F97004A5373 /* Products */;
 			projectDirPath = "";
@@ -441,55 +419,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/awslabs/aws-sdk-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.22.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A893EB4C2A8818FF00C9E6D2 /* AWSACM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSACM;
-		};
-		A893EB4E2A8818FF00C9E6D2 /* AWSACMPCA */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSACMPCA;
-		};
-		A893EB502A8818FF00C9E6D2 /* AWSAPIGateway */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSAPIGateway;
-		};
-		A893EB522A8818FF00C9E6D2 /* AWSARCZonalShift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSARCZonalShift;
-		};
-		A893EB542A8818FF00C9E6D2 /* AWSAccessAnalyzer */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSAccessAnalyzer;
-		};
-		A893EB562A8818FF00C9E6D2 /* AWSAccount */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSAccount;
-		};
-		A893EB582A8818FF00C9E6D2 /* AWSAlexaForBusiness */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A893EB4B2A8818FF00C9E6D2 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
-			productName = AWSAlexaForBusiness;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A858C49E2A828F97004A5373 /* Project object */;
 }

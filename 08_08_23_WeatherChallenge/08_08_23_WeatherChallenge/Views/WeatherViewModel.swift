@@ -8,9 +8,6 @@
 import Foundation
 import SwiftUI
 import Combine
-import AWSClientRuntime
-import AwsCSdkUtils
-
 
 typealias FullWeatherResponse = (advice: WeatherAdvice?, moment: WeatherMoment?)
 
