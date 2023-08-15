@@ -4,6 +4,12 @@
 <dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>AWS_BASE_URL</key>
+	<string>http://weatheradviceendpoint-env.eba-a4cqsq7q.us-west-2.elasticbeanstalk.com/weather</string>
+	<key>WEATHERAPI_KEY</key>
+	<string>35c81d7ef4a94893993170611230808</string>
+	<key>WEATHERAPI_BASE_URL</key>
+	<string>https://api.weatherapi.com/v1/current.json</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>NSAppTransportSecurity</key>

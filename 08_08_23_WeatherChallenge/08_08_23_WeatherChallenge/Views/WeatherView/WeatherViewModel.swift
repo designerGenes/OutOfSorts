@@ -11,55 +11,43 @@ import Combine
 
 typealias FullWeatherResponse = (advice: WeatherAdvice?, moment: WeatherMoment?)
 
-enum OpenAIParameter: String {
-    case prompt
-    case model
-    case maxTokens = "max_tokens"
-    case messages
-    case temperature
-    static func weatherAdvicePrompt(weather: WeatherMoment) -> String {
-        return "It's \(weather.current.tempF) degrees and \(weather.current.condition.text.lowercased()). What should I wear?"
-    }
-    
-    enum MessagesParameter: String {
-        case role, content
-    }
-    
-    enum OpenAIModel: String {
-        case gpt4 = "gpt-4"
-        case gpt4_0613 = "gpt-4-0613"
-        case gpt3_5_turbo = "gpt-3.5-turbo"
-    }
-}
-
 class WeatherViewViewModel: ObservableObject {
     @Published var usesFahrenheit: Bool = true
     @Published var zipCode: String = ""
     @Published var weatherMoment: WeatherMoment?
     @Published var weatherAdvice: WeatherAdvice?
-    private let API_KEY = "35c81d7ef4a94893993170611230808"
+    private let API_KEY = Bundle.main.object(forInfoDictionaryKey: "WEATHERAPI_KEY") as! String
     
-    private var currentWeatherURL: URL {
-        URL(string: "https://api.weatherapi.com/v1/current.json?key=\(API_KEY)&q=\(zipCode)&aqi=yes")!
-    }
-    private func aiWeatherAdviceURL(weatherMoment: WeatherMoment) -> URL {
-        let urlBase = "http://weatheradviceendpoint-env.eba-a4cqsq7q.us-west-2.elasticbeanstalk.com/weather"
+    private var currentWeatherURL: URL? {
+        let urlBase = Bundle.main.object(forInfoDictionaryKey: "WEATHERAPI_BASE_URL") as! String
         var urlComponents = URLComponents(string: urlBase)
         urlComponents?.queryItems = [
-            URLQueryItem(name: "zipCode", value: self.zipCode),
-            URLQueryItem(name: "weatherTemp", value: String(describing: weatherMoment.current.tempF)),
-            URLQueryItem(name: "weatherCondition", value: weatherMoment.current.condition.text.lowercased()),
+            "key".queryItem(API_KEY),
+            "q".queryItem(zipCode),
+            "aqi".queryItem("yes")
+        ]
+        return urlComponents?.url
+    }
+    private func aiWeatherAdviceURL(weatherMoment: WeatherMoment) -> URL? {
+        let urlBase = Bundle.main.object(forInfoDictionaryKey: "AWS_BASE_URL") as! String
+        var urlComponents = URLComponents(string: urlBase)
+        urlComponents?.queryItems = [
+            "zipCode".queryItem(self.zipCode),
+            "weatherTemp".queryItem(String(describing: weatherMoment.current.tempF)),
+            "weatherCondition".queryItem(weatherMoment.current.condition.text.lowercased()),
         ]
 
-        return urlComponents!.url!
+        return urlComponents?.url
     }
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     func getWeatherAdviceFromAWS(weatherMoment: WeatherMoment) async throws -> WeatherAdvice {
         
-        let url = aiWeatherAdviceURL(weatherMoment: weatherMoment)
-        print("making AI advice request at: \(url.absoluteString)")
+        guard let url = aiWeatherAdviceURL(weatherMoment: weatherMoment) else {
+            throw URLError(.badURL)
+        }
+//        print("making AI advice request at: \(url.absoluteString)")
         let (data, _) = try await URLSession.shared.data(from: url)
         let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
         let responseString = openAIResponse.choices.first?.message.content
@@ -67,8 +55,10 @@ class WeatherViewViewModel: ObservableObject {
     }
     
     func getCurrentWeather() async throws -> WeatherMoment {
-        let url = currentWeatherURL
-        print("making weather request at: \(url.absoluteString)")
+        guard let url = currentWeatherURL else {
+            throw URLError(.badURL)
+        }
+//        print("making weather request at: \(url.absoluteString)")
         let (data, _) = try await URLSession.shared.data(from: url)
         return try JSONDecoder().decode(WeatherMoment.self, from: data)
     }

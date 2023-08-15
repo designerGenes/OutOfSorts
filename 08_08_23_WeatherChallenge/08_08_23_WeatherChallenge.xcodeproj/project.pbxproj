@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A812DAA02A8A89B800AF5B07 /* CommandButtonIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DA9F2A8A89B800AF5B07 /* CommandButtonIcon.swift */; };
+		A812DAA32A8A8B1E00AF5B07 /* String+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAA22A8A8B1E00AF5B07 /* String+Convenience.swift */; };
+		A812DAA52A8A8D4900AF5B07 /* Notification+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAA42A8A8D4900AF5B07 /* Notification+Custom.swift */; };
+		A812DAAB2A8A8D5600AF5B07 /* WeatherAdviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAA62A8A8D5600AF5B07 /* WeatherAdviceView.swift */; };
+		A812DAAC2A8A8D5600AF5B07 /* CommandBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAA72A8A8D5600AF5B07 /* CommandBar.swift */; };
+		A812DAAD2A8A8D5600AF5B07 /* SaddleCommandBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAA82A8A8D5600AF5B07 /* SaddleCommandBar.swift */; };
+		A812DAAE2A8A8D5600AF5B07 /* CurrentTemperatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAA92A8A8D5600AF5B07 /* CurrentTemperatureView.swift */; };
+		A812DAAF2A8A8D5600AF5B07 /* StackText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812DAAA2A8A8D5600AF5B07 /* StackText.swift */; };
 		A83BA9D82A82AFFD00E31334 /* WeatherMoment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83BA9D72A82AFFD00E31334 /* WeatherMoment.swift */; };
 		A84362822A8538A900B26935 /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84362812A8538A900B26935 /* WeatherViewModel.swift */; };
 		A858C4AA2A828F97004A5373 /* _8_08_23_WeatherChallengeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A858C4A92A828F97004A5373 /* _8_08_23_WeatherChallengeApp.swift */; };
@@ -19,6 +27,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A812DA9F2A8A89B800AF5B07 /* CommandButtonIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandButtonIcon.swift; sourceTree = "<group>"; };
+		A812DAA22A8A8B1E00AF5B07 /* String+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Convenience.swift"; sourceTree = "<group>"; };
+		A812DAA42A8A8D4900AF5B07 /* Notification+Custom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Custom.swift"; sourceTree = "<group>"; };
+		A812DAA62A8A8D5600AF5B07 /* WeatherAdviceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherAdviceView.swift; sourceTree = "<group>"; };
+		A812DAA72A8A8D5600AF5B07 /* CommandBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandBar.swift; sourceTree = "<group>"; };
+		A812DAA82A8A8D5600AF5B07 /* SaddleCommandBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaddleCommandBar.swift; sourceTree = "<group>"; };
+		A812DAA92A8A8D5600AF5B07 /* CurrentTemperatureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentTemperatureView.swift; sourceTree = "<group>"; };
+		A812DAAA2A8A8D5600AF5B07 /* StackText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackText.swift; sourceTree = "<group>"; };
 		A83BA9D72A82AFFD00E31334 /* WeatherMoment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherMoment.swift; sourceTree = "<group>"; };
 		A84362812A8538A900B26935 /* WeatherViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
 		A858C4A62A828F97004A5373 /* 08_08_23_WeatherChallenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 08_08_23_WeatherChallenge.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +60,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A812DA9D2A8A896F00AF5B07 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				A812DA9F2A8A89B800AF5B07 /* CommandButtonIcon.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
+		A812DA9E2A8A897B00AF5B07 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A812DAA42A8A8D4900AF5B07 /* Notification+Custom.swift */,
+				A812DAA22A8A8B1E00AF5B07 /* String+Convenience.swift */,
+				A8B2E2512A8292A400A1B0EE /* Image+Design.swift */,
+				A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A812DAA12A8A89F300AF5B07 /* WeatherView */ = {
+			isa = PBXGroup;
+			children = (
+				A812DAA72A8A8D5600AF5B07 /* CommandBar.swift */,
+				A812DAA92A8A8D5600AF5B07 /* CurrentTemperatureView.swift */,
+				A812DAA82A8A8D5600AF5B07 /* SaddleCommandBar.swift */,
+				A812DAAA2A8A8D5600AF5B07 /* StackText.swift */,
+				A812DAA62A8A8D5600AF5B07 /* WeatherAdviceView.swift */,
+				A858C4AB2A828F97004A5373 /* WeatherView.swift */,
+				A84362812A8538A900B26935 /* WeatherViewModel.swift */,
+			);
+			path = WeatherView;
+			sourceTree = "<group>";
+		};
 		A82D92042A82AFE40008F7A9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -73,11 +122,11 @@
 		A858C4A82A828F97004A5373 /* 08_08_23_WeatherChallenge */ = {
 			isa = PBXGroup;
 			children = (
+				A812DA9E2A8A897B00AF5B07 /* Extensions */,
+				A812DA9D2A8A896F00AF5B07 /* Enums */,
 				A8FC09742A8541A40018FA45 /* Info.plist */,
 				A82D92042A82AFE40008F7A9 /* Models */,
 				A858C4A92A828F97004A5373 /* _8_08_23_WeatherChallengeApp.swift */,
-				A8B2E2512A8292A400A1B0EE /* Image+Design.swift */,
-				A891B11F2A8291CA00A1C5F8 /* Color+Design.swift */,
 				A858C4B72A82919C004A5373 /* Views */,
 				A858C4AD2A828F98004A5373 /* Assets.xcassets */,
 				A858C4AF2A828F98004A5373 /* Preview Content */,
@@ -96,8 +145,7 @@
 		A858C4B72A82919C004A5373 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A858C4AB2A828F97004A5373 /* WeatherView.swift */,
-				A84362812A8538A900B26935 /* WeatherViewModel.swift */,
+				A812DAA12A8A89F300AF5B07 /* WeatherView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -185,11 +233,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				A858C4AC2A828F97004A5373 /* WeatherView.swift in Sources */,
+				A812DAAE2A8A8D5600AF5B07 /* CurrentTemperatureView.swift in Sources */,
 				A84362822A8538A900B26935 /* WeatherViewModel.swift in Sources */,
+				A812DAA32A8A8B1E00AF5B07 /* String+Convenience.swift in Sources */,
+				A812DAAF2A8A8D5600AF5B07 /* StackText.swift in Sources */,
 				A8B2E2522A8292A400A1B0EE /* Image+Design.swift in Sources */,
+				A812DAAD2A8A8D5600AF5B07 /* SaddleCommandBar.swift in Sources */,
+				A812DAAB2A8A8D5600AF5B07 /* WeatherAdviceView.swift in Sources */,
 				A858C4AA2A828F97004A5373 /* _8_08_23_WeatherChallengeApp.swift in Sources */,
+				A812DAA52A8A8D4900AF5B07 /* Notification+Custom.swift in Sources */,
+				A812DAAC2A8A8D5600AF5B07 /* CommandBar.swift in Sources */,
 				A881FC102A85479500410CF8 /* WeatherAdvice.swift in Sources */,
 				A83BA9D82A82AFFD00E31334 /* WeatherMoment.swift in Sources */,
+				A812DAA02A8A89B800AF5B07 /* CommandButtonIcon.swift in Sources */,
 				A891B1202A8291CA00A1C5F8 /* Color+Design.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
